@@ -16,6 +16,7 @@ __pycache__/
 reports/allure-results/*
 reports/*.html
 reports/logs/*
+reports/*
 !reports/.gitkeep
 
 # Variables de entorno secretas
