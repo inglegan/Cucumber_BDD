@@ -1,0 +1,22 @@
+# Entorno virtual
+.venv/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE (PyCharm / VS Code)
+.idea/
+.vscode/
+
+# Reportes y logs temporales
+reports/allure-results/*
+reports/*.html
+reports/logs/*
+!reports/.gitkeep
+
+# Variables de entorno secretas
+.env
