@@ -2,48 +2,41 @@ name: Test Automation Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ main ]
+    branches: [ "main" ]
 
 jobs:
   test:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout del repositorio
-        uses: actions/checkout@v4
+    - name: Checkout del repositorio
+      uses: actions/checkout@v4
 
-      - name: Configurar Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: "pip"
+    - name: Configurar Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
 
-      - name: Instalar Google Chrome
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y wget curl unzip libxi6 libgconf-2-4 libnss3
-          wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
-          sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
-          sudo apt-get update
-          sudo apt-get install -y google-chrome-stable
+    - name: Instalar dependencias
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
 
-      - name: Instalar dependencias del proyecto
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
+    - name: Ejecutar pruebas BDD Behave
+      run: |
+        behave -f allure_behave.formatter:AllureFormatter -o reports/allure-results features/
 
-      - name: Ejecutar pruebas BDD con Behave
-        env:
-          CI: "true"
-        run: |
-          behave -f allure_behave.formatter:AllureFormatter -o reports/allure-results features/
+    - name: Generar Reporte HTML
+      if: always()
+      run: |
+        python generar_reporte.py
 
-      - name: Subir resultados de Allure
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results
-          path: reports/allure-results
-          retention-days: 14
+    - name: Subir reporte como artefacto
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: reporte-ejecucion-html
+        path: reports/reporte.html
