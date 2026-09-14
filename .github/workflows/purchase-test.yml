@@ -30,7 +30,7 @@ jobs:
         run: |
           mkdir -p reports/allure-results
            # behave -f allure_behave.formatter:AllureFormatter -o reports/allure-results features/purchase.feature
-           behave -k --no-capture --no-capture-stderr -f allure_behave.formatter:AllureFormatter -o reports/allure-results features/purchase.feature
+           behave --no-capture --no-capture-stderr -f allure_behave.formatter:AllureFormatter -o reports/allure-results features/purchase.feature
            
 
       - name: Generar Reporte Visual
