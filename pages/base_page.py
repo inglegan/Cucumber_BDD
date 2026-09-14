@@ -29,3 +29,6 @@ class BasePage:
 
     def is_visible(self, locator: tuple) -> bool:
         return self.wait.until(EC.visibility_of_element_located(locator)).is_displayed()
+
+    def find_element(self, *locator):
+        return self.driver.find_element(*locator)
