@@ -27,7 +27,7 @@ pipeline {
             steps {
                 bat '''
                     call .venv\\Scripts\\activate
-                    behave features/purchase.feature -f json -o reports/allure-results/result.json
+                    behave features/purchase.feature -f json.pretty -o reports/allure-results/result.json
                     python generar_reporte.py
                 '''
             }
