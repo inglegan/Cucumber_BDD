@@ -1,22 +1,16 @@
 pipeline {
     agent any
-	
-	environment {
-        CI = 'true'
-        PYTHONUNBUFFERED = '1'
-    }
 
     stages {
         stage('Preparar Entorno') {
             steps {
                 echo 'Validando instalación de Python y Git...'
-                // En Windows usar bat, en Linux/Mac usar sh
                 bat 'python --version'
                 bat 'python -m pip install --upgrade pip'
             }
         }
-		
-		stage('Instalar Dependencias') {
+
+        stage('Instalar Dependencias') {
             steps {
                 echo 'Instalando librerías desde requirements.txt...'
                 bat 'pip install -r requirements.txt'
@@ -25,18 +19,29 @@ pipeline {
 
         stage('Ejecutar Pruebas de Compra') {
             steps {
-                bat '''
-                    call .venv\\Scripts\\activate
-                    behave features/purchase.feature -f json.pretty -o reports/allure-results/result.json
-                    python generar_reporte.py
-                '''
+                echo 'Corriendo escenario de compra en Behave...'
+                bat 'behave -f allure_behave.formatter:AllureFormatter -o reports/allure-results features/purchase.feature'
+            }
+        }
+
+        stage('Generar Reporte Visual') {
+            steps {
+                echo 'Procesando resultados JSON a reporte HTML...'
+                bat 'python generar_reporte.py'
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline de pruebas de compra finalizado.'
+            echo 'Archivando evidencias de la ejecución...'
+            archiveArtifacts artifacts: 'reports/reporte.html, reports/allure-results/*', allowEmptyArchive: true
+        }
+        failure {
+            echo 'La ejecución contiene escenarios fallidos.'
+        }
+        success {
+            echo 'El escenario de compra concluyó con éxito.'
         }
     }
 }
