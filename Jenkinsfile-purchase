@@ -17,7 +17,7 @@ pipeline {
             steps {
                 bat '''
                     call .venv\\Scripts\\activate
-                    behave features/purchase.feature --no-capture --no-capture-stderr -v -f json -o reports/purchase_report.json
+                    behave features/purchase.feature -f json -o reports/allure-results/result.json
                     python generar_reporte.py
                 '''
             }
