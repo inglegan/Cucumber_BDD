@@ -12,8 +12,12 @@ class InventoryPage(BasePage):
         # En SauceDemo, el botón dinámico se puede encontrar localizando el texto del producto
         # y encontrando el botón 'Add to cart' asociado dentro de su contenedor.
         xpath_button = f"//div[text()='{product_name}']/ancestor::div[@class='inventory_item']//button"
-        button = self.find_element(By.XPATH, xpath_button)
+        button = WebDriverWait(self.driver, 10).until(
+            EC.element_to_be_clickable((By.XPATH, xpath_button)))
         button.click()
+        """
+        button = self.find_element(By.XPATH, xpath_button)
+        button.click()"""
 
     def get_cart_badge_count(self):
         badge = self.find_element(*self.CART_BADGE)
