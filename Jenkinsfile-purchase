@@ -4,52 +4,44 @@ pipeline {
     stages {
         stage('Preparar Entorno') {
             steps {
-                script {
-                    // Detectar si el agente es Windows o Linux para usar el comando adecuado
-                    if (isUnix()) {
-                        sh '''
-                            python3 -m venv .venv
-                            . .venv/bin/activate
-                            pip install --upgrade pip
-                            pip install -r requirements.txt
-                        '''
-                    } else {
-                        bat '''
-                            python -m venv .venv
-                            .venv\\Scripts\\activate
-                            python -m pip install --upgrade pip
-                            pip install -r requirements.txt
-                        '''
-                    }
-                }
+                echo 'Validando instalación de Python y Git...'
+                bat 'python --version'
+                bat 'python -m pip install --upgrade pip'
+            }
+        }
+
+        stage('Instalar Dependencias') {
+            steps {
+                echo 'Instalando librerías desde requirements.txt...'
+                bat 'pip install -r requirements.txt'
             }
         }
 
         stage('Ejecutar Pruebas de Compra') {
             steps {
-                script {
-                    if (isUnix()) {
-                        sh '''
-                            . .venv/bin/activate
-                            behave features/purchase.feature -f json -o reports/purchase_report.json
-                            python generar_reporte.py
-                        '''
-                    } else {
-                        bat '''
-                            .venv\\Scripts\\activate
-                            behave features/purchase.feature -f json -o reports/purchase_report.json
-                            python generar_reporte.py
-                        '''
-                    }
-                }
+                echo 'Corriendo escenario de compra en Behave...'
+                bat 'behave -f allure_behave.formatter:AllureFormatter -o reports/allure-results features/purchase.feature'
+            }
+        }
+
+        stage('Generar Reporte Visual') {
+            steps {
+                echo 'Procesando resultados JSON a reporte HTML...'
+                bat 'python generar_reporte.py'
             }
         }
     }
 
     post {
         always {
-            // Opcional: Publicar reportes si usas plugins en Jenkins (como Cucumber Reports o HTML Publisher)
-            echo 'Pipeline de pruebas de compra finalizado.'
+            echo 'Archivando evidencias de la ejecución...'
+            archiveArtifacts artifacts: 'reports/reporte.html, reports/allure-results/*', allowEmptyArchive: true
+        }
+        failure {
+            echo 'La ejecución contiene escenarios fallidos.'
+        }
+        success {
+            echo 'El escenario de compra concluyó con éxito.'
         }
     }
 }
