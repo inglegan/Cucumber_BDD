@@ -1,15 +1,25 @@
 pipeline {
     agent any
+	
+	environment {
+        CI = 'true'
+        PYTHONUNBUFFERED = '1'
+    }
 
     stages {
-        stage('Preparar Entorno e Instalar Dependencias') {
+        stage('Preparar Entorno') {
             steps {
-                bat '''
-                    python -m venv .venv
-                    call .venv\\Scripts\\activate
-                    python -m pip install --upgrade pip
-                    pip install -r requirements.txt
-                '''
+                echo 'Validando instalación de Python y Git...'
+                // En Windows usar bat, en Linux/Mac usar sh
+                bat 'python --version'
+                bat 'python -m pip install --upgrade pip'
+            }
+        }
+		
+		stage('Instalar Dependencias') {
+            steps {
+                echo 'Instalando librerías desde requirements.txt...'
+                bat 'pip install -r requirements.txt'
             }
         }
 
