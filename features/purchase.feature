@@ -3,7 +3,7 @@ Feature: Selección de productos y adición al carrito en SauceDemo
   Quiero seleccionar productos específicos
   Para agregarlos al carrito de compras y completar la orden
 
-  Scenario: Agregar dos productos específicos al carrito de compras y realizar el checkout
+  Scenario: Agregar cuatro productos específicos al carrito de compras y realizar el checkout
     Given el usuario inicia sesión con las credenciales válidas "standard_user" y "secret_sauce"
     When el usuario agrega los siguientes productos al carrito:
       | producto                              |
