@@ -1,4 +1,5 @@
 import logging
+from selenium.common import TimeoutException
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
@@ -14,9 +15,22 @@ class BasePage:
         self.logger.info(f"Navegando a: {url}")
         self.driver.get(url)
 
+
+
+
+
     def click(self, locator: tuple):
         self.logger.info(f"Haciendo clic en: {locator}")
-        self.wait.until(EC.element_to_be_clickable(locator)).click()
+        try:
+            self.wait.until(EC.element_to_be_clickable(locator)).click()
+        except TimeoutException:
+            self.logger.error(f"No se pudo hacer clic en {locator}. URL actual: {self.driver.current_url}")
+            raise
+
+
+
+
+
 
     def type_text(self, locator: tuple, text: str):
         self.logger.info(f"Ingresando texto en: {locator}")
@@ -32,3 +46,4 @@ class BasePage:
 
     def find_element(self, *locator):
         return self.driver.find_element(*locator)
+

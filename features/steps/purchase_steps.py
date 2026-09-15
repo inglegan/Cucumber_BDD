@@ -3,7 +3,6 @@ from pages.login_page import LoginPage
 from pages.inventory_page import InventoryPage
 from pages.cart_page import CartPage
 from pages.checkout_page import CheckoutPage
-from selenium.webdriver.common.by import By
 import assertpy
 
 @given('el usuario inicia sesión con las credenciales válidas "{username}" y "{password}"')
