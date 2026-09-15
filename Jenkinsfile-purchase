@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+environment {
+        CI = 'true'
+        PYTHONUNBUFFERED = '1'
+    }
+
     stages {
         stage('Preparar Entorno') {
             steps {
